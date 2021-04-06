@@ -1,5 +1,12 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box
+}
+
 .App {
-  text-align: center;
+  /* text-align: center; */
 }
 
 .App-logo {
@@ -27,6 +34,95 @@
 .App-link {
   color: #61dafb;
 }
+
+.botao-menu-geral {
+  background: #3f51b5;
+  background-image: -webkit-linear-gradient(top, #3f51b5, #1E62D0);
+  background-image: -moz-linear-gradient(top, #3f51b5, #1E62D0);
+  background-image: -ms-linear-gradient(top, #3f51b5, #1E62D0);
+  background-image: -o-linear-gradient(top, #3f51b5, #1E62D0);
+  background-image: -webkit-gradient(to bottom, #3f51b5, #1E62D0);
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  /* min-width: 50px 50px 50px 50px; */
+  margin-right: 20px;
+  color: #FFFFFF;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 30px;
+  font-weight: 100;
+  padding: 34px;
+  -webkit-box-shadow: 0 0 20px 0 #0059A0;
+  -moz-box-shadow: 0 0 20px 0 #0059A0;
+  box-shadow: 0 0 20px 0 #0059A0;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.botao-menu-geral:hover {
+  border: solid #337FED 1px;
+  background: #1E62D0;
+  background-image: -webkit-linear-gradient(top, #1E62D0, #3f51b5);
+  background-image: -moz-linear-gradient(top, #1E62D0, #3f51b5);
+  background-image: -ms-linear-gradient(top, #1E62D0, #3f51b5);
+  background-image: -o-linear-gradient(top, #1E62D0, #3f51b5);
+  background-image: -webkit-gradient(to bottom, #1E62D0, #3f51b5);
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  text-decoration: none;
+}
+
+.novo-orgao {
+  width: 600px;
+  display: flex;
+  flex-direction: column; 
+}
+
+.titulo-projeto {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: left;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.projeto-list {
+  width: 50%;
+  margin-left: 25%;
+  margin-top: 1%;
+  flex-grow: 1;
+}
+
+.etapa-list {
+  width: 100%;
+  margin-left: 0%;
+  margin-top: 1%;
+  flex-grow: 1;
+}
+
+.processo-list {
+  width: 100%;
+  /* margin-left: 25%; */
+  margin-top: 1%;
+  flex-grow: 1;
+}
+
+.tarefa-list {
+  width: 100%;
+  /* margin-left: 25%; */
+  /* color: #0083ff1c; */
+  text-align: left;
+  margin-top: 1%;
+  flex-grow: 1;
+
+}
+
+#MuiPaper-root {
+  background-color: #0083ff1c;
+}
+
 
 @keyframes App-logo-spin {
   from {

@@ -1,57 +1,35 @@
 import React, { useState, useEffect} from 'react';
-// import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import api from '../../../services/api';
 import Button from '../../button/Button';
 import SaveIcon from '@material-ui/icons/Save';
 import './FormOrgao.css';
 
-
+const initialValue = {
+  desc_orgao: '',
+  uf: '',
+  id_div_orgao: 0,
+  cod_mun: '',
+}
 
 const CadastroOrgaoForm = ({ id }) => {  
-
-    const initialValue = {
-      desc_orgao: '',
-      uf: '',
-      div_orgao: '',
-      cod_mun: '',
-      descricao: '',
-      id_div_orgao: '',
-      desc_mun: '',
-    }
-
-
-    const [values, setValues] = useState(initialValue);
-    const [uf, setUF] = React.useState('AC');
-    const [listMunicipio, setListMunicipio] = React.useState([]);
-    const [listDivOrgao, setListDivOrgao] = useState([]);
-  // const history = useHistory();
-
-  
-  
-
-  useEffect(() => {
-    if(id){
-      api.get(`/orgao/visualizar/${id}`)
-        .then((response) => {
-          setValues(response.data);
-          console.log(response.data);
-        })
-    }
-  }, []);
+  const [values, setValues] = useState(initialValue);
+  const [uf, setUF] = useState('');
+  const [listMunicipio, setListMunicipio] = useState([]);
+  const [listDivOrgao, setListDivOrgao] = useState([]);
+  const history = useHistory();
 
   function loadDivOrgao() {
     api.get(`/divorgao/listar`)
         .then((response) => {
     setListDivOrgao(response.data.content);
-    // console.log(response.data.content);
   })};
   
   function loadMunicipio(id) {
     if(id){
       api.get(`/municipio/listaporuf/${id}`)
         .then((response) => {
-          // setListMunicipio([response.data.content]);
-          setListMunicipio({ content_municipio: response.data.content });
+          setListMunicipio(response.data);
         })
     }
   };
@@ -59,24 +37,29 @@ const CadastroOrgaoForm = ({ id }) => {
   useEffect(() => {
     loadDivOrgao();
   });
+
+  useEffect(() => {
+    loadMunicipio(uf);
+  }, [uf]);
   
   
   function onChange(ev) {
-    console.log(ev.target.value);
-    // const { name, value } = ev.target;
-    // setValues({ ...values, [name]: value});
-    // setUF(value);
-    // console.log(value);
+    setUF(ev.target.value);
   }
 
-  // function onSubmit(ev) {
-  //   ev.preventDefault();
-  //   api.post(`/orgao/cadastrar/`, values)
-  //     .then((response) => {
-  //       history.push('/');
-  //     });
-  // }
-  // const { content_municipio } = this.state;
+  function onChangeField(ev) {
+    const { name, value } = ev.target;
+    setValues({ ...values, [name]: value});
+  }
+
+  function onSubmit(ev) {
+    ev.preventDefault();
+    api.post(`/orgao/cadastrar/`, values)
+      .then((response) => {
+        history.push('/');
+        alert("CADASTRADO COM SUCESSO");
+      });
+  }
   
   return (
     <div className="div-orgao">
@@ -85,14 +68,24 @@ const CadastroOrgaoForm = ({ id }) => {
       <div>
         <br/>
         <br/>
-      <form  className="orgao-form__orgao" noValidate autoComplete="on"> {/* onSubmit={onSubmit} */}
-        <div key="desc_orgao"className="orgao-form__orgao">
+      <form  className="orgao-form__orgao" noValidate autoComplete="on" onSubmit={onSubmit} >
+        <div key="desc_orgao" className="orgao-form__orgao">
           <label htmlFor="desc_orgao">Descrição do Orgão</label>
-          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChange} value={values.desc_orgao} />
+          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChangeField} />
+        </div>
+        <div className="orgao-form__orgao">
+          <label htmlFor="id_div_orgao">Divisão do Orgão</label>
+          <select id="id_div_orgao" className="orgao-form__orgao" name="id_div_orgao" type="number" onChange={onChangeField} >
+              <option value=""></option>
+              {listDivOrgao.map((divOrg => (
+              <option key={divOrg.id_div_orgao} value={divOrg.id_div_orgao}>{divOrg.descricao}</option>
+              )))}
+          </select>
         </div>
         <div key="uf" className="orgao-form__orgao">
           <label htmlFor="uf">UF</label>
-          <select id="uf" className="orgao-form__orgao" name="uf" onChange={onChange} value={values.uf}>
+          <select id="uf" className="orgao-form__orgao" name="uf" onChange={onChange} onClick={onChangeField}>
+            <option value=""></option>
             <option value="AC">Acre (AC)</option>
             <option value="AL">Alagoas (AL)</option>
             <option value="AP">Amapá (AP)</option>
@@ -122,31 +115,16 @@ const CadastroOrgaoForm = ({ id }) => {
             <option value="TO">Tocantins (TO)</option>
           </select>
         </div>
-        
-        <div className="orgao-form__orgao">
-          <label htmlFor="div_orgao">Divisão do Orgão</label>
-          <select id="div_orgao" className="orgao-form__orgao" name="div_orgao" onChange={onChange} >
+         <div className="orgao-form__orgao">
+          <label htmlFor="cod_mun">Municipio</label>
+          <select id="cod_mun" className="orgao-form__orgao" name="cod_mun" onChange={onChangeField} >
               <option value=""></option>
-              {listDivOrgao.map((divOrg, index) => (
-              <option key={index} value={divOrg.id_div_orgao}>{divOrg.descricao}</option>
-              ))}
+              {listMunicipio.map((codMun => (
+               <option key={codMun.id_municipio} value={codMun.id_municipio}>{codMun.desc_mun}</option>
+              )))}
           </select>
-            
         </div>
 
-        {/* <div key="id_municipio" className="orgao-form__orgao">
-          <label htmlFor="cod_municipio">Municipio</label>
-          <select id="cod_municipio" className="orgao-form__orgao" name="cod_municipio" value={values.cod_mun}  onChange={onChange}>
-              <option value=""></option>
-              {listMunicipio.map((codMun, index) => (
-               <option key={index}>
-                  {codMun.desc_mun}
-               </option>
-              ))}
-
-
-          </select>
-        </div> */}
         <div>
           <br/>
           <Button><SaveIcon/> Cadastrar</Button>
