@@ -1,19 +1,19 @@
 import React from 'react';
 import Menu from '../../../components/header/index';
-import TableAgenda from '../../../components/cadastros/agenda/TableAgenda';
+import TableIntervalo from '../../../components/cadastros/intervalo/TableIntervalo';
 
 
-const ListAgenda = () => {
+const ListIntervalo = () => {
   
     return (
       <div>
         <Menu>
           <div>
-            <TableAgenda/>
+            <TableIntervalo/>
           </div>
         </Menu>
       </div>
     );
 }
 
-export default ListAgenda;
+export default ListIntervalo;

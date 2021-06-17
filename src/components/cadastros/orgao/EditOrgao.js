@@ -5,46 +5,76 @@ import Button from '../../button/Button';
 import SaveIcon from '@material-ui/icons/Save';
 import './FormOrgao.css';
 
+
 const initialValue = {
+  id_orgao: '',
   desc_orgao: '',
   uf: '',
   id_div_orgao: 0,
+  divorgaos: { id_div_orgao: '', descricao: '' },
   cod_mun: '',
+  desc_mun: '',
+
 }
 
-const CadastroOrgaoForm = ({ id }) => {  
+const EditarOrgaoForm = ({ id }) => {  
   const [values, setValues] = useState(initialValue);
   const [uf, setUF] = useState('');
   const [listMunicipio, setListMunicipio] = useState([]);
   const [listDivOrgao, setListDivOrgao] = useState([]);
   const history = useHistory();
 
+  function loadOrgao(id) {
+    if(id){
+      api.get(`/orgao/visualizar/${id}`)
+        .then((response) => {
+          setValues(response.data);
+          setUF(values.uf);
+          console.log(response.data);
+        })
+    }
+  }
+
   function loadDivOrgao() {
     api.get(`/divorgao/listar`)
         .then((response) => {
-    setListDivOrgao(response.data.content);
+          setListDivOrgao(response.data.content);
+          console.log("carrega div orgao");
   })};
   
-  function loadMunicipio(id) {
-    if(id){
-      api.get(`/municipio/listaporuf/${id}`)
+  function loadMunicipio(uf) {
+    if(uf){
+      api.get(`/municipio/listaporuf/${uf}`)
         .then((response) => {
           setListMunicipio(response.data);
+          console.log("carrega municipio");
         })
     }
   };
 
   useEffect(() => {
-    loadDivOrgao();
-  });
+    
+    loadMunicipio(uf);
+    console.log("effect do municipio");
+    // loadDivOrgao();
+  }, [uf]);
 
   useEffect(() => {
-    loadMunicipio(uf);
-  }, [uf]);
+    // if(id) {
+      loadOrgao();
+
+      console.log("effect do orgao");
+      // loadMunicipio(uf);
+      // loadDivOrgao();
+    // }
+    
+  });
   
   
   function onChange(ev) {
     setUF(ev.target.value);
+    console.log("on change da uf");
+    loadDivOrgao();
   }
 
   function onChangeField(ev) {
@@ -56,14 +86,14 @@ const CadastroOrgaoForm = ({ id }) => {
     ev.preventDefault();
     api.post(`/orgao/cadastrar/`, values)
       .then((response) => {
-        history.push('/');
+        history.push('/cadastrar/orgao');
         alert("CADASTRADO COM SUCESSO");
       });
   }
   
   return (
     <div className="div-orgao">
-      <h3>Cadastro de Órgãos</h3>
+      <h3>Editar de Órgão</h3>
     
       <div>
         <br/>
@@ -71,21 +101,12 @@ const CadastroOrgaoForm = ({ id }) => {
       <form  className="orgao-form__orgao" noValidate autoComplete="on" onSubmit={onSubmit} >
         <div key="desc_orgao" className="orgao-form__orgao">
           <label htmlFor="desc_orgao">Descrição do Orgão</label>
-          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChangeField} />
-        </div>
-        <div className="orgao-form__orgao">
-          <label htmlFor="id_div_orgao">Divisão do Orgão</label>
-          <select id="id_div_orgao" className="orgao-form__orgao" name="id_div_orgao" type="number" onChange={onChangeField} >
-              <option value=""></option>
-              {listDivOrgao.map((divOrg => (
-              <option key={divOrg.id_div_orgao} value={divOrg.id_div_orgao}>{divOrg.descricao}</option>
-              )))}
-          </select>
+          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChangeField} value={values.desc_orgao} />
         </div>
         <div key="uf" className="orgao-form__orgao">
           <label htmlFor="uf">UF</label>
           <select id="uf" className="orgao-form__orgao" name="uf" onChange={onChange} onClick={onChangeField}>
-            <option value=""></option>
+            <option value={values.uf}></option>
             <option value="AC">Acre (AC)</option>
             <option value="AL">Alagoas (AL)</option>
             <option value="AP">Amapá (AP)</option>
@@ -125,9 +146,19 @@ const CadastroOrgaoForm = ({ id }) => {
           </select>
         </div>
 
+        <div className="orgao-form__orgao">
+          <label htmlFor="id_div_orgao">Divisão do Orgão</label>
+          <select id="id_div_orgao" className="orgao-form__orgao" name="id_div_orgao" type="number" onChange={onChangeField} >
+              <option value={values.id_div_orgao}>{values.divorgaos.descricao}</option>
+              {listDivOrgao.map((divOrg => (
+              <option key={divOrg.id_div_orgao} value={divOrg.id_div_orgao}>{divOrg.descricao}</option>
+              )))}
+          </select>
+        </div>
+
         <div>
           <br/>
-          <Button><SaveIcon/> Cadastrar</Button>
+          <Button><SaveIcon/> ALTERAR</Button>
         </div>
       </form>
       </div>
@@ -136,4 +167,4 @@ const CadastroOrgaoForm = ({ id }) => {
   )
 }
 
-export default CadastroOrgaoForm;
+export default EditarOrgaoForm;

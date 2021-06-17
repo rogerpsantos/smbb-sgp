@@ -1,11 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Menu from '../../../components/header/index';
-import FormAgenda from '../../../components/cadastros/agenda/FormAgenda';
-import EditAgenda from '../../../components/cadastros/agenda/EditAgenda';
+import FormProjeto from '../../../components/cadastros/projeto/FormProjeto';
+import EditProjeto from '../../../components/cadastros/projeto/EditProjeto';
 
 
-const Agenda = () => {
+const Projeto = () => {
 
   const { id } = useParams();
 
@@ -14,7 +14,7 @@ const Agenda = () => {
         <div>
           <Menu>
             <div>
-              <EditAgenda id={id ? Number.parseInt(id, 10) : null} />
+              <EditProjeto id={id ? Number.parseInt(id, 10) : null} />
             </div>
           </Menu>
         </div>
@@ -24,7 +24,7 @@ const Agenda = () => {
       <div>
         <Menu>
           <div>
-            <FormAgenda />
+            <FormProjeto />
           </div>
         </Menu>
       </div>
@@ -32,4 +32,4 @@ const Agenda = () => {
   }
 }
 
-export default Agenda;
+export default Projeto;

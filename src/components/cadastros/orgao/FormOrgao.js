@@ -1,65 +1,62 @@
-import React, { Component } from 'react';
-// import { useHistory } from 'react-router-dom';
-import Button from '../../button/Button';
-import './FormOrgao.css';
+import React, { useState, useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 import api from '../../../services/api';
+import Button from '../../button/Button';
 import SaveIcon from '@material-ui/icons/Save';
-// import Container from '@material-ui/core/Container';
+import './FormOrgao.css';
 
 
+const initialValue = {
+  desc_orgao: '',
+  uf: '',
+  id_div_orgao: 0,
+  cod_mun: '',
+}
 
-export default class OrgaoForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      content_div_orgao: [],
-      content_municipio: [],
-      desc_orgao: '',
-      uf: '',
-      div_orgao: '',
-      cod_mun: '',
-    };
-  }
+const CadastroOrgaoForm = ({ id }) => {  
+  const [values, setValues] = useState(initialValue);
+  const [uf, setUF] = useState('');
+  const [listMunicipio, setListMunicipio] = useState([]);
+  const [listDivOrgao, setListDivOrgao] = useState([]);
+  const history = useHistory();
+
+  function loadDivOrgao() {
+    api.get(`/divorgao/listar`)
+        .then((response) => {
+    setListDivOrgao(response.data.content);
+  })};
   
+  function loadMunicipio(id) {
+    if(id){
+      api.get(`/municipio/listaporuf/${id}`)
+        .then((response) => {
+          setListMunicipio(response.data);
+        })
+    }
+  };
 
-  componentDidMount() {
-    this.loadDivOrgao();
-  }
-
-  loadDivOrgao = async () => {
-    const response = await api.get(`/divorgao/listar`);
-    const { content } = response.data;
-    this.setState({ content_div_orgao: content });
-  }
- 
-  // loadMunicipio = async (value) => {
-  //   // const response = await api.get(`/municipio/listaporuf/${value}`);
-  //   // const { content } = response.data;
-  //   this.setState({ content_div_orgao: value });
-  // }
-
-  render() {
-
-  const { content_div_orgao } = this.state;
+  useEffect(() => {
+    loadMunicipio(uf);
+  }, [uf]);
   
-  // function onChange(ev){
-  async function onChange(ev){
-      const { value }  = ev.target;
-      const response = await api.get(`/municipio/listaporuf/${value}`);
-      const { content } = response.data;
-      this.state.content_municipio = content;
+  
+  function onChange(ev) {
+    setUF(ev.target.value);
+    loadDivOrgao();
   }
 
-  const { content_municipio } = this.state;
-  
+  function onChangeField(ev) {
+    const { name, value } = ev.target;
+    setValues({ ...values, [name]: value});
+  }
 
   function onSubmit(ev) {
     ev.preventDefault();
-
-    // api.post('/orgao/cadastrar', values)
-    //   .then((response) => {
-    //     history.push('/orgao/listar');
-    //   });
+    api.post(`/orgao/cadastrar/`, values)
+      .then((response) => {
+        history.push('/cadastrar/orgao');
+        alert("CADASTRADO COM SUCESSO");
+      });
   }
   
   return (
@@ -69,14 +66,14 @@ export default class OrgaoForm extends Component {
       <div>
         <br/>
         <br/>
-      <form onSubmit={onSubmit} className="orgao-form__orgao" noValidate autoComplete="on">
-        <div key="desc_orgao"className="orgao-form__orgao">
+      <form  className="orgao-form__orgao" noValidate autoComplete="on" onSubmit={onSubmit} >
+        <div key="desc_orgao" className="orgao-form__orgao">
           <label htmlFor="desc_orgao">Descrição do Orgão</label>
-          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChange} />
+          <input className="orgao-form__orgao" id="desc_orgao" name="desc_orgao" type="text" onChange={onChangeField} />
         </div>
         <div key="uf" className="orgao-form__orgao">
           <label htmlFor="uf">UF</label>
-          <select id="uf" className="orgao-form__orgao" name="uf" onChange={onChange}>
+          <select id="uf" className="orgao-form__orgao" name="uf" onChange={onChange} onClick={onChangeField}>
             <option value=""></option>
             <option value="AC">Acre (AC)</option>
             <option value="AL">Alagoas (AL)</option>
@@ -107,26 +104,26 @@ export default class OrgaoForm extends Component {
             <option value="TO">Tocantins (TO)</option>
           </select>
         </div>
-
-        <div className="orgao-form__orgao">
-          <label htmlFor="div_orgao">Divisão do Orgão</label>
-          <select id="div_orgao" className="orgao-form__orgao" name="div_orgao" onChange={onChange} >
-              <option value=""> </option> 
-              {content_div_orgao.map(divOrg => (
-              <option key={divOrg.id_div_orgao} value={divOrg.id_div_orgao}>{divOrg.id_div_orgao + " - " + divOrg.descricao}</option>
-              ))} 
+         <div className="orgao-form__orgao">
+          <label htmlFor="cod_mun">Municipio</label>
+          <select id="cod_mun" className="orgao-form__orgao" name="cod_mun" onChange={onChangeField} >
+              <option value=""></option>
+              {listMunicipio.map((codMun => (
+               <option key={codMun.id_municipio} value={codMun.id_municipio}>{codMun.desc_mun}</option>
+              )))}
           </select>
-            
         </div>
 
         <div className="orgao-form__orgao">
-          <label htmlFor="cod_municipio">Cod. Municipio</label>
-          <select id="cod_municipio" className="orgao-form__orgao" name="cod_municipio" >
-            {content_municipio.map(codMun => (
-              <option key={codMun.id_municipio} value={codMun.id_municipio}>{codMun.desc_mun}</option>
-            ))}   
+          <label htmlFor="id_div_orgao">Divisão do Orgão</label>
+          <select id="id_div_orgao" className="orgao-form__orgao" name="id_div_orgao" type="number" onChange={onChangeField} >
+              <option value=""></option>
+              {listDivOrgao.map((divOrg => (
+              <option key={divOrg.id_div_orgao} value={divOrg.id_div_orgao}>{divOrg.descricao}</option>
+              )))}
           </select>
-        </div>        
+        </div>
+
         <div>
           <br/>
           <Button><SaveIcon/> Cadastrar</Button>
@@ -136,6 +133,6 @@ export default class OrgaoForm extends Component {
     </div>
     
   )
-  }
 }
-// export default OrgaoForm;
+
+export default CadastroOrgaoForm;

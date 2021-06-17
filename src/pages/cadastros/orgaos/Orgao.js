@@ -1,24 +1,35 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Menu from '../../../components/header/index';
-// import OrgaoForm from '../../components/orgao/FormOrgao';
-import NewForm from '../../../components/cadastros/orgao/NewForm';
+import FormOrgao from '../../../components/cadastros/orgao/FormOrgao';
+import EditOrgao from '../../../components/cadastros/orgao/EditOrgao';
 
 
 const Orgao = () => {
 
   const { id } = useParams();
 
+    if(id) {
+      return (
+        <div>
+          <Menu>
+            <div>
+              <EditOrgao id={id ? Number.parseInt(id, 10) : null} />
+            </div>
+          </Menu>
+        </div>
+      );
+    } else {
     return (
       <div>
         <Menu>
           <div>
-            <NewForm id={id ? Number.parseInt(id, 10) : null} />
+            <FormOrgao />
           </div>
         </Menu>
       </div>
     );
-
+  }
 }
 
 export default Orgao;

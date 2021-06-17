@@ -1,19 +1,19 @@
 import React from 'react';
 import Menu from '../../../components/header/index';
-import TableAgenda from '../../../components/cadastros/agenda/TableAgenda';
+import TableFeriado from '../../../components/cadastros/feriado/TableFeriado';
 
 
-const ListAgenda = () => {
+const ListFeriado = () => {
   
     return (
       <div>
         <Menu>
           <div>
-            <TableAgenda/>
+            <TableFeriado/>
           </div>
         </Menu>
       </div>
     );
 }
 
-export default ListAgenda;
+export default ListFeriado;

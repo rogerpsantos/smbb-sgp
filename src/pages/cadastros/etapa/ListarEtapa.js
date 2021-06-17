@@ -1,19 +1,19 @@
 import React from 'react';
 import Menu from '../../../components/header/index';
-import TableAgenda from '../../../components/cadastros/agenda/TableAgenda';
+import TableEtapa from '../../../components/cadastros/etapa/TableEtapa';
 
 
-const ListAgenda = () => {
+const ListEtapa = () => {
   
     return (
       <div>
         <Menu>
           <div>
-            <TableAgenda/>
+            <TableEtapa/>
           </div>
         </Menu>
       </div>
     );
 }
 
-export default ListAgenda;
+export default ListEtapa;
